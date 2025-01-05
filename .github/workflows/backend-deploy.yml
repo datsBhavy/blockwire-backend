@@ -19,8 +19,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
-          run: echo "${AWS_ACCESS_KEY_ID} is set"
-          run: echo "${AWS_SECRET_ACCESS_KEY} is set"
+          run: echo "${AWS_ACCESS_KEY_ID} and ${AWS_SECRET_ACCESS_KEY} is set"
 
       - name: Package application
         run: zip -r app.zip .
