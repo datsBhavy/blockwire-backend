@@ -1,9 +1,9 @@
-name: Backend CI/CD
+name: Backend Deployment
 
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
@@ -13,28 +13,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Verify AWS CLI credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          node-version: '21'
-
-      - name: Install dependencies
-        run: npm install
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
 
       - name: Package application
         run: zip -r app.zip .
 
-      - name: Check AWS Credentials
-        run: echo "AWS_ACCESS_KEY_ID is set"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          application_name: blockwire-backend
+          application_name: blockwire-backend 
           environment_name: Blockwire-backend-env
           version_label: v-${{ github.run_number }}
           region: us-east-2
           deployment_package: app.zip
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
