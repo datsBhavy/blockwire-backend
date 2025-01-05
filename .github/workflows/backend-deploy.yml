@@ -24,13 +24,17 @@ jobs:
       - name: Package application
         run: zip -r app.zip .
 
+      - name: Check AWS Credentials
+        run: echo "AWS_ACCESS_KEY_ID is set"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: blockwire-backend
           environment_name: Blockwire-backend-env
           version_label: v-${{ github.run_number }}
           region: us-east-2
-          deployment_package: deploy.zip
+          deployment_package: app.zip
